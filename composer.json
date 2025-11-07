@@ -1,0 +1,53 @@
+{
+    "name": "robertgdev/laravel-toon",
+    "description": "Laravel integration for TOON - A human-readable data serialization format",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "TOON Contributors"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/console": ">10",
+        "illuminate/support": ">10",
+        "robertgdev/php-toon": "^1.0"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.0",
+        "phpunit/phpunit": "^12.0",
+        "orchestra/testbench": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RobertGDev\\LaravelToon\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RobertGDev\\LaravelToon\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RobertGDev\\LaravelToon\\ToonServiceProvider"
+            ],
+            "aliases": {
+                "Toon": "RobertGDev\\LaravelToon\\Facades\\Toon"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
