@@ -37,9 +37,6 @@ return [
 
         // Enforce strict validation of array lengths and indentation
         'strict' => env('TOON_DECODE_STRICT', true),
-
-        // Decode objects as StdClass instances instead of arrays
-        'objectsAsStdClass' => env('TOON_DECODE_OBJECTS_AS_STDCLASS', false),
     ],
 
 ];

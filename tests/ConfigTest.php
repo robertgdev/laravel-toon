@@ -9,7 +9,6 @@ describe('Configuration', function () {
         expect(config('toon.encode.lengthMarker'))->toBe(false);
         expect(config('toon.decode.indent'))->toBe(2);
         expect(config('toon.decode.strict'))->toBe(true);
-        expect(config('toon.decode.objectsAsStdClass'))->toBe(false);
     });
 
     it('can be overridden via config', function () {
@@ -67,7 +66,7 @@ describe('Configuration Publishing', function () {
         expect($config)->toHaveKey('encode');
         expect($config)->toHaveKey('decode');
         expect($config['encode'])->toHaveKey('indent');
-        expect($config['decode'])->toHaveKey('objectsAsStdClass');
+        expect($config['decode'])->toHaveKey('strict');
         
         // Clean up
         File::delete($configPath);
@@ -109,14 +108,11 @@ describe('Toon Service with Config', function () {
     });
 
     it('applies config defaults when decoding', function () {
-        config(['toon.decode.objectsAsStdClass' => true]);
-        
         $toon = app('toon');
         $toonStr = "name: Ada";
         $decoded = $toon->decode($toonStr);
         
-        expect($decoded)->toBeInstanceOf(StdClass::class);
-        expect($decoded->name)->toBe('Ada');
+        expect($decoded)->toBe(['name' => 'Ada']);
     });
 
     it('allows overriding config with explicit options', function () {
@@ -126,7 +122,7 @@ describe('Toon Service with Config', function () {
         $data = ['user' => ['name' => 'Ada']];
         
         // Override with 4-space indent
-        $options = new \RobertGDev\Toon\Types\EncodeOptions(indent: 4);
+        $options = new \HelgeSverre\Toon\EncodeOptions(indent: 4);
         $encoded = $toon->encode($data, $options);
         
         expect($encoded)->toBe("user:\n    name: Ada");

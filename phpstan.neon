@@ -1,0 +1,25 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    parallel:       
+        jobSize: 20
+        maximumNumberOfProcesses: 8
+        minimumNumberOfJobsPerProcess: 2
+
+    paths:
+        - src/
+
+    # Level 9 is the highest level
+    level: 9
+
+#    ignoreErrors:
+#
+#    excludePaths:
+#        - ./*/*/FileToBeExcluded.php
+#
+#    checkMissingIterableValueType: false
+#
+#    universalObjectCratesClasses:
+#        - App\Datatypes\Collection

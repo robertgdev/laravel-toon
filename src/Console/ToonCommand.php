@@ -3,9 +3,9 @@
 namespace  RobertGDev\LaravelToon\Console;
 
 use Illuminate\Console\Command;
-use RobertGDev\Toon\Toon;
-use RobertGDev\Toon\Types\DecodeOptions;
-use RobertGDev\Toon\Types\EncodeOptions;
+use HelgeSverre\Toon\Toon;
+use HelgeSverre\Toon\DecodeOptions;
+use HelgeSverre\Toon\EncodeOptions;
 
 class ToonCommand extends Command
 {
@@ -39,46 +39,46 @@ class ToonCommand extends Command
     public function handle(): int
     {
         $input = $this->argument('input');
+        if (!is_string($input)) {
+            $this->error('Input argument is required and must be a string');
+            return self::FAILURE;
+        }
+
         $output = $this->option('output');
+        $output = is_string($output) || $output === null ? $output : null;
 
         // Parse and validate indent
-        $indent = (int) $this->option('indent');
+        $indentOption = $this->option('indent');
+        $indent = is_numeric($indentOption) ? (int)$indentOption : 2;
         if ($indent < 0) {
-            $this->error("Invalid indent value: {$this->option('indent')}");
+            $this->error("Invalid indent value: {$indent}");
             return self::FAILURE;
         }
 
         // Validate delimiter
         $delimiter = $this->option('delimiter');
+        if (!is_string($delimiter)) {
+            $delimiter = ',';
+        }
         $validDelimiters = [',', "\t", '|'];
         if (!in_array($delimiter, $validDelimiters, true)) {
             $this->error("Invalid delimiter \"{$delimiter}\". Valid delimiters are: comma (,), tab (\\t), pipe (|)");
             return self::FAILURE;
         }
 
-        $mode = $this->detectMode(
-            $input,
-            $this->option('encode'),
-            $this->option('decode')
-        );
+        $encode = (bool)$this->option('encode');
+        $decode = (bool)$this->option('decode');
+
+        $mode = $this->detectMode($input, $encode, $decode);
 
         try {
             if ($mode === 'encode') {
-                $this->encodeToToon(
-                    $input,
-                    $output,
-                    $delimiter,
-                    $indent,
-                    $this->option('length-marker'),
-                    $this->option('stats')
-                );
+                $lengthMarker = (bool)$this->option('length-marker');
+                $stats        = (bool)$this->option('stats');
+
+                $this->encodeToToon($input, $output, $delimiter, $indent, $lengthMarker, $stats);
             } else {
-                $this->decodeToJson(
-                    $input,
-                    $output,
-                    $indent,
-                    !$this->option('no-strict')
-                );
+                $this->decodeToJson($input, $output, $indent, !$this->option('no-strict'));
             }
 
             return self::SUCCESS;
@@ -102,10 +102,10 @@ class ToonCommand extends Command
         }
 
         // Auto-detect based on file extension
-        if (str_ends_with($inputFile, '.json')) {
+        if ($inputFile !== null && str_ends_with($inputFile, '.json')) {
             return 'encode';
         }
-        if (str_ends_with($inputFile, '.toon')) {
+        if ($inputFile !== null && str_ends_with($inputFile, '.toon')) {
             return 'decode';
         }
 
@@ -129,6 +129,9 @@ class ToonCommand extends Command
         }
 
         $jsonContent = file_get_contents($input);
+        if ($jsonContent === false) {
+            throw new \RuntimeException("Failed to read input file: {$input}");
+        }
         
         try {
             $data = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
@@ -179,6 +182,9 @@ class ToonCommand extends Command
         }
 
         $toonContent = file_get_contents($input);
+        if ($toonContent === false) {
+            throw new \RuntimeException("Failed to read input file: {$input}");
+        }
 
         try {
             $decodeOptions = new DecodeOptions(
@@ -190,7 +196,10 @@ class ToonCommand extends Command
             throw new \RuntimeException("Failed to decode TOON: {$e->getMessage()}");
         }
 
-        $jsonOutput = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE, $indent);
+        $jsonOutput = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE, 512);
+        if ($jsonOutput === false) {
+            throw new \RuntimeException("Failed to encode JSON output");
+        }
 
         if ($output) {
             file_put_contents($output, $jsonOutput);
@@ -208,7 +217,7 @@ class ToonCommand extends Command
     private function getRelativePath(string $path): string
     {
         $cwd = getcwd();
-        if (str_starts_with($path, $cwd)) {
+        if ($cwd !== false && str_starts_with($path, $cwd)) {
             return substr($path, strlen($cwd) + 1);
         }
         return $path;

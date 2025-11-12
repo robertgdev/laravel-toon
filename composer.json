@@ -10,14 +10,15 @@
     ],
     "require": {
         "php": "^8.2",
+        "helgesverre/toon": "^1.4",
         "illuminate/console": ">10",
-        "illuminate/support": ">10",
-        "robertgdev/php-toon": "^1.0"
+        "illuminate/support": ">10"
     },
     "require-dev": {
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^9.0",
         "pestphp/pest": "^4.0",
-        "phpunit/phpunit": "^12.0",
-        "orchestra/testbench": "^9.0"
+        "phpunit/phpunit": "^12.0"
     },
     "autoload": {
         "psr-4": {

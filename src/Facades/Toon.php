@@ -5,8 +5,8 @@ namespace  RobertGDev\LaravelToon\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string encode(mixed $input, ?\RobertGDev\Toon\Types\EncodeOptions $options = null)
- * @method static mixed decode(string $input, ?\RobertGDev\Toon\Types\DecodeOptions $options = null)
+ * @method static string encode(mixed $input, ?\HelgeSverre\Toon\EncodeOptions $options = null)
+ * @method static mixed decode(string $input, ?\HelgeSverre\Toon\DecodeOptions $options = null)
  *
  * @see \RobertGDev\LaravelToon\Toon
  */

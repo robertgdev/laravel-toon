@@ -2,8 +2,8 @@
 
 use RobertGDev\LaravelToon\Facades\Toon;
 use RobertGDev\LaravelToon\Toon as ToonService;
-use RobertGDev\Toon\Types\EncodeOptions;
-use RobertGDev\Toon\Types\DecodeOptions;
+use HelgeSverre\Toon\EncodeOptions;
+use HelgeSverre\Toon\DecodeOptions;
 
 describe('Laravel Integration', function () {
     it('registers Toon service in container', function () {
@@ -46,15 +46,12 @@ describe('Configuration Integration', function () {
 
     it('uses configured decode defaults', function () {
         config(['toon.decode.strict' => false]);
-        config(['toon.decode.objectsAsStdClass' => true]);
         
         $toon = app('toon');
         $encoded = "user:\n  name: Ada";
         $decoded = $toon->decode($encoded);
         
-        expect($decoded)->toBeInstanceOf(StdClass::class);
-        expect($decoded->user)->toBeInstanceOf(StdClass::class);
-        expect($decoded->user->name)->toBe('Ada');
+        expect($decoded)->toBe(['user' => ['name' => 'Ada']]);
     });
 
     it('allows per-call option overrides', function () {
@@ -116,28 +113,21 @@ describe('Facade Functionality', function () {
         expect($encoded)->toBe("name: Ada\nage: 30");
     });
 
-    it('decodes with StdClass when configured', function () {
-        config(['toon.decode.objectsAsStdClass' => true]);
-        
+    it('decodes to associative array', function () {
         $toon = "name: Ada\nage: 30";
         $decoded = Toon::decode($toon);
         
-        expect($decoded)->toBeInstanceOf(StdClass::class);
-        expect($decoded->name)->toBe('Ada');
-        expect($decoded->age)->toBe(30);
+        expect($decoded)->toBe(['name' => 'Ada', 'age' => 30]);
     });
 
-    it('supports perfect round-trips with StdClass', function () {
-        config(['toon.decode.objectsAsStdClass' => true]);
-        
-        $original = new StdClass();
-        $original->name = 'Ada';
-        $original->items = [1, 2, 3];
+    it('supports round-trips with associative arrays', function () {
+        $original = ['name' => 'Ada', 'items' => [1, 2, 3]];
         
         $encoded = Toon::encode($original);
         $decoded = Toon::decode($encoded);
         $reEncoded = Toon::encode($decoded);
         
         expect($reEncoded)->toBe($encoded);
+        expect($decoded)->toBe($original);
     });
 });

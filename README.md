@@ -2,7 +2,7 @@
 
 Laravel integration for TOON - A human-readable data serialization format.
 
-This package provides Laravel-specific features on top of the [robertgdev/php-toon](https://github.com/robertgdev/php-toon) core library.
+This package provides Laravel-specific features on top of the [helgesverre/toon](https://github.com/helgesverre/toon) core library.
 
 ## Installation
 
@@ -10,7 +10,7 @@ This package provides Laravel-specific features on top of the [robertgdev/php-to
 composer require robertgdev/laravel-toon
 ```
 
-This will automatically install the `robertgdev/php-toon` core library as a dependency.
+This will automatically install the `helgesverre/toon` core library as a dependency.
 
 ## Configuration
 
@@ -57,7 +57,6 @@ TOON_ENCODE_LENGTH_MARKER=false
 # Decoding options
 TOON_DECODE_INDENT=2
 TOON_DECODE_STRICT=true
-TOON_DECODE_OBJECTS_AS_STDCLASS=false
 ```
 
 **Available Delimiters:**
@@ -69,9 +68,7 @@ TOON_DECODE_OBJECTS_AS_STDCLASS=false
 - `false` (default) - no marker
 - `true` or `#` - adds `#` prefix to array lengths
 
-**Objects as StdClass:**
-- `false` (default) - objects decode to associative arrays
-- `true` - objects decode to `StdClass` instances (enables perfect round-trips)
+
 
 ### Using Configured Defaults
 
@@ -85,7 +82,7 @@ $encoded = Toon::encode($data);
 $decoded = Toon::decode($encoded);
 
 // Override with custom options
-use RobertGDev\Toon\Types\EncodeOptions;
+use HelgeSverre\Toon\EncodeOptions;
 $encoded = Toon::encode($data, new EncodeOptions(indent: 4));
 ```
 
@@ -97,7 +94,7 @@ The package provides a Laravel facade for easy access:
 
 ```php
 use RobertGDev\LaravelToon\Facades\Toon;
-use RobertGDev\Toon\Types\EncodeOptions;
+use HelgeSverre\Toon\EncodeOptions;
 
 // Simple encoding
 $data = ['name' => 'Ada', 'age' => 30, 'active' => true];
@@ -127,13 +124,13 @@ $decoded = \Toon::decode($encoded);
 You can also use the core library directly:
 
 ```php
-use RobertGDev\Toon\Toon;
+use HelgeSverre\Toon\Toon;
 
 $encoded = Toon::encode(['name' => 'Ada']);
 $decoded = Toon::decode($encoded);
 ```
 
-For detailed API documentation, see the [robertgdev/php-toon](https://github.com/robertgdev/php-toon) package.
+For detailed API documentation, see the [helgesverre/toon](https://github.com/helgesverre/toon) package.
 
 ## Artisan Command
 
@@ -194,7 +191,7 @@ php artisan toon:convert input.toon --no-strict
 
 ## Package Structure
 
-This package is a thin Laravel integration layer. The core TOON functionality is provided by the `robertgdev/php-toon` package, which is a standalone PHP library.
+This package is a thin Laravel integration layer. The core TOON functionality is provided by the `helgesverre/toon` package, which is a standalone PHP library.
 
 ### What's in this package:
 - [`ToonServiceProvider`](src/ToonServiceProvider.php) - Registers the service and command
@@ -208,13 +205,13 @@ This package is a thin Laravel integration layer. The core TOON functionality is
 - Type definitions and options
 - Core TOON parser and serializer
 
-See [robertgdev/php-toon](https://github.com/robertgdev/php-toon) for the core library documentation.
+See [helgesverre/toon](https://github.com/helgesverre/toon) for the core library documentation.
 
 ## Requirements
 
 - PHP 8.2+
 - Laravel 10.x or 11.x or 12.x
-- robertgdev/php-toon (automatically installed)
+- helgesverre/toon (automatically installed)
 
 ## Testing
 

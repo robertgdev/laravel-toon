@@ -2,9 +2,9 @@
 
 namespace  RobertGDev\LaravelToon;
 
-use RobertGDev\Toon\Toon as BaseToon;
-use RobertGDev\Toon\Types\DecodeOptions;
-use RobertGDev\Toon\Types\EncodeOptions;
+use HelgeSverre\Toon\Toon as BaseToon;
+use HelgeSverre\Toon\DecodeOptions;
+use HelgeSverre\Toon\EncodeOptions;
 
 /**
  * Laravel wrapper for Toon encoding/decoding with config support.
@@ -34,11 +34,18 @@ class Toon
      */
     protected function getDefaultEncodeOptions(): EncodeOptions
     {
-        return new EncodeOptions(
-            indent: config('toon.encode.indent', 2),
-            delimiter: config('toon.encode.delimiter', ','),
-            lengthMarker: $this->parseLengthMarker(config('toon.encode.lengthMarker', false))
-        );
+        $indent = config('toon.encode.indent', 2);
+        $indent = is_numeric($indent) ? (int)$indent : 2;
+        
+        $delimiter = config('toon.encode.delimiter', ',');
+        if (!is_string($delimiter)) {
+            $delimiter = ',';
+        }
+        
+        $lengthMarker = config('toon.encode.lengthMarker', false);
+        $lengthMarker = $this->parseLengthMarker($lengthMarker);
+
+        return new EncodeOptions($indent, $delimiter, $lengthMarker);
     }
 
     /**
@@ -46,11 +53,13 @@ class Toon
      */
     protected function getDefaultDecodeOptions(): DecodeOptions
     {
-        return new DecodeOptions(
-            indent: config('toon.decode.indent', 2),
-            strict: config('toon.decode.strict', true),
-            objectsAsStdClass: config('toon.decode.objectsAsStdClass', false)
-        );
+        $indent = config('toon.decode.indent', 2);
+        $indent = is_numeric($indent) ? (int)$indent : 2;
+        
+        $strict = config('toon.decode.strict', true);
+        $strict = is_bool($strict) || $strict === 'true' || $strict === 1;
+        
+        return new DecodeOptions($indent, $strict);
     }
 
     /**
