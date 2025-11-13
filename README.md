@@ -2,7 +2,7 @@
 
 Laravel integration for TOON - A human-readable data serialization format.
 
-This package provides Laravel-specific features on top of the [helgesverre/toon](https://github.com/helgesverre/toon) core library.
+This package provides Laravel-specific features on top of the [helgesverre/toon-php](https://github.com/HelgeSverre/toon-php) core library.
 
 ## Installation
 
@@ -10,7 +10,7 @@ This package provides Laravel-specific features on top of the [helgesverre/toon]
 composer require robertgdev/laravel-toon
 ```
 
-This will automatically install the `helgesverre/toon` core library as a dependency.
+This will automatically install the `helgesverre/toon-php` core library as a dependency.
 
 ## Configuration
 
