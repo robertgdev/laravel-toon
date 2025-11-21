@@ -132,6 +132,77 @@ $decoded = Toon::decode($encoded);
 
 For detailed API documentation, see the [helgesverre/toon](https://github.com/helgesverre/toon) package.
 
+### Using the Toonable Interface and Trait
+
+The package provides a convenient way to make your DTOs, models, or any PHP objects directly convertible to TOON format using the `Toonable` interface and `ToonFormat` trait.
+
+#### Basic Usage
+
+```php
+use RobertGDev\LaravelToon\Contracts\Toonable;
+use RobertGDev\LaravelToon\Concerns\ToonFormat;
+
+class UserDTO implements Toonable
+{
+    use ToonFormat;
+
+    public function __construct(
+        public string $name,
+        public int $age,
+        public array $roles,
+    ) {}
+}
+
+// Now you can call toToon() directly on your object
+$user = new UserDTO('John Doe', 30, ['admin', 'owner']);
+$toon = $user->toToon();
+
+// Output:
+// name: John Doe
+// age: 30
+// roles[2]: admin,owner
+```
+
+#### With Custom Encoding Options
+
+You can pass custom encoding options to the `toToon()` method:
+
+```php
+use HelgeSverre\Toon\EncodeOptions;
+
+$user = new UserDTO('John Doe', 30, ['admin', 'owner']);
+
+// Use a custom delimiter
+$options = new EncodeOptions(delimiter: '|');
+$toon = $user->toToon($options);
+
+// Output:
+// name: John Doe
+// age: 30
+// roles[2|]: admin|owner
+```
+
+#### Using with Eloquent Models
+
+You can also use this with Laravel Eloquent models:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use RobertGDev\LaravelToon\Contracts\Toonable;
+use RobertGDev\LaravelToon\Concerns\ToonFormat;
+
+class User extends Model implements Toonable
+{
+    use ToonFormat;
+
+    // Your model definition...
+}
+
+// Convert a model instance to TOON
+$user = User::find(1);
+$toon = $user->toToon();
+```
+
 ## Artisan Command
 
 The package includes an Artisan command for converting between JSON and TOON formats:
@@ -183,6 +254,7 @@ php artisan toon:convert input.toon --no-strict
 ## Features
 
 - **Laravel Facade**: Use `Toon::encode()` and `Toon::decode()` anywhere in your Laravel app
+- **Toonable Interface & Trait**: Add `toToon()` method to any class (DTOs, models, etc.) with a simple trait
 - **Artisan Command**: Convert files between JSON and TOON formats via CLI
 - **Auto-Registration**: Service provider and facade automatically registered via package discovery
 - **Service Container**: Toon class registered as a singleton in Laravel's container
@@ -197,8 +269,10 @@ This package is a thin Laravel integration layer. The core TOON functionality is
 - [`ToonServiceProvider`](src/ToonServiceProvider.php) - Registers the service and command
 - [`Toon` Facade](src/Facades/Toon.php) - Laravel facade for easy access
 - [`ToonCommand`](src/Console/ToonCommand.php) - Artisan command for file conversion
+- [`Toonable` Interface](src/Contracts/Toonable.php) - Contract for objects convertible to TOON
+- [`ToonFormat` Trait](src/Concerns/ToonFormat.php) - Provides `toToon()` method implementation
 - Configuration file with Laravel integration
-- Comprehensive integration test suite (38 tests covering all features)
+- Comprehensive integration test suite covering all features
 
 ### What's in the core package:
 - All encoding/decoding logic
